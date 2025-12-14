@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Head from 'next/head';
 import Modal from 'react-modal';
 import BingoCard from '../components/BingoCard';
 
@@ -34,6 +35,7 @@ function App() {
       const { gridData, markedIndices } = JSON.parse(saved);
       setGridData(gridData);
       setMarkedIndices(markedIndices);
+      setIsLoading(false);
     } else {
       generateNewCard();
     }
@@ -118,6 +120,12 @@ function App() {
 
   return (
     <div className="container">
+      <Head>
+        <title>Family Bingo</title>
+        <meta name="description" content="Bingo card generator for family fun" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+
       <header>
         <h1>BINGO</h1>
       </header>
