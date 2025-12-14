@@ -144,6 +144,29 @@ header h1 {
   /* Ensure no padding affects image */
 }
 
+.cell.winning {
+  background-color: #ffd700;
+  /* Gold */
+  color: black;
+  animation: pulse 1s infinite;
+  box-shadow: 0 0 15px #ffd700;
+  z-index: 10;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
 .new-card-btn {
   background-color: var(--primary-color);
   color: white;

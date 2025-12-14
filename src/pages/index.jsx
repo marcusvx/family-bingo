@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Modal from 'react-modal';
+import confetti from 'canvas-confetti';
 import BingoCard from '../components/BingoCard';
+import { checkWin, FUN_MESSAGES } from '../lib/winLogic';
 
 // Modal needs to bind to the app element
 Modal.setAppElement('#__next');
@@ -28,6 +30,9 @@ function App() {
   const [markedIndices, setMarkedIndices] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Start loading on mount
+  const [winningIndices, setWinningIndices] = useState([]);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [showVictory, setShowVictory] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -36,6 +41,9 @@ function App() {
       setGridData(gridData);
       setMarkedIndices(markedIndices);
       setIsLoading(false);
+      // Re-check win on load just in case
+      const win = checkWin(markedIndices);
+      if (win) setWinningIndices(win);
     } else {
       generateNewCard();
     }
@@ -93,17 +101,87 @@ function App() {
       setIsLoading(false);
     }
     setMarkedIndices([]); // Clear marks
+    setWinningIndices([]);
+    setShowVictory(false);
+  };
+
+  const triggerConfetti = () => {
+    const duration = 3000;
+    const end = Date.now() + duration;
+
+    (function frame() {
+      // launch a few confetti from the left edge
+      confetti({
+        particleCount: 7,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 }
+      });
+      // and launch a few from the right edge
+      confetti({
+        particleCount: 7,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 }
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    }());
+  };
+
+  const showRandomToast = () => {
+    // 30% chance to show a message
+    if (Math.random() < 0.3) {
+      const msg = FUN_MESSAGES[Math.floor(Math.random() * FUN_MESSAGES.length)];
+      setToastMessage(msg);
+      setTimeout(() => setToastMessage(null), 3000);
+    }
   };
 
   const handleCellClick = (index) => {
+    // If already won, maybe don't toggle? allowing toggle for correction.
+
+    let newMarked;
     setMarkedIndices(prev => {
       if (prev.includes(index)) {
-        return prev.filter(i => i !== index);
+        newMarked = prev.filter(i => i !== index);
       } else {
-        return [...prev, index];
+        newMarked = [...prev, index];
+        showRandomToast(); // Only show message on marking, not unmarking
       }
+      return newMarked;
     });
+
+    // Check for win AFTER state update would happen (need to use newMarked local var)
+    // Actually, state update is async, so we use the local variable logic
+    // But wait, setMarkedIndices callback runs later? No, we can calculate newMarked synchronously here 
+    // to pass to checkWin immediately, but React state setter with function is better.
+    // Let's use useEffect to check win on markedIndices change instead?
+    // Using useEffect for win check is cleaner to separate logic.
   };
+
+  // Effect to check win when marked indices change
+  useEffect(() => {
+    if (markedIndices.length < 5) {
+      setWinningIndices([]);
+      setShowVictory(false);
+      return;
+    }
+
+    const winLine = checkWin(markedIndices);
+    if (winLine) {
+      if (winningIndices.length === 0) { // First time winning this game
+        setWinningIndices(winLine);
+        setShowVictory(true);
+        triggerConfetti();
+      }
+    } else {
+      setWinningIndices([]);
+      setShowVictory(false);
+    }
+  }, [markedIndices]);
 
   const confirmNewCard = () => {
     setIsModalOpen(true);
@@ -141,11 +219,27 @@ function App() {
             <BingoCard
               gridData={gridData}
               markedIndices={markedIndices}
+              winningIndices={winningIndices}
               onCellClick={handleCellClick}
             />
           )
         )}
       </main>
+
+      {/* Victory Overlay */}
+      {showVictory && (
+        <div className="victory-overlay" onClick={() => setShowVictory(false)}>
+          <h1>CINQUINA!</h1>
+          <p>Parabéns!</p>
+        </div>
+      )}
+
+      {/* Toast Message */}
+      {toastMessage && (
+        <div className="toast-message">
+          {toastMessage}
+        </div>
+      )}
 
       <footer>
         <button className="new-card-btn" onClick={confirmNewCard}>

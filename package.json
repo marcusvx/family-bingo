@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "canvas-confetti": "^1.9.4",
     "express": "^5.2.1",
     "next": "^15.0.3",
     "react": "^18.3.1",

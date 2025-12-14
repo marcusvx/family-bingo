@@ -1,12 +1,12 @@
 import React from 'react';
 // import free from '../assets/leia.png'; // Removed import, using public path
 
-function BingoCard({ gridData, onCellClick, markedIndices }) {
+function BingoCard({ gridData, onCellClick, markedIndices, winningIndices = [] }) {
   // ... (keeping existing logic) ...
 
   const rows = [];
   // (omitted loop logic as we don't need to change it, just the rendering part below)
-  
+
   // Re-write the rendering loop to use the image
   const cells = [];
   let cellIndex = 0;
@@ -18,9 +18,9 @@ function BingoCard({ gridData, onCellClick, markedIndices }) {
       const isFree = value === 'FREE';
 
       cells.push(
-        <div 
+        <div
           key={currentIndex}
-          className={`cell ${isMarked ? 'marked' : ''} ${isFree ? 'free' : ''}`}
+          className={`cell ${isMarked ? 'marked' : ''} ${isFree ? 'free' : ''} ${winningIndices.includes(currentIndex) ? 'winning' : ''}`}
           onClick={() => !isFree && onCellClick(currentIndex)}
         >
           {isFree ? <img src="/assets/leia.png" alt="LIVRE" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : value}
@@ -32,12 +32,12 @@ function BingoCard({ gridData, onCellClick, markedIndices }) {
 
   return (
     <div className="bingo-card">
-        <div className="header-cell">B</div>
-        <div className="header-cell">I</div>
-        <div className="header-cell">N</div>
-        <div className="header-cell">G</div>
-        <div className="header-cell">O</div>
-        {cells}
+      <div className="header-cell">B</div>
+      <div className="header-cell">I</div>
+      <div className="header-cell">N</div>
+      <div className="header-cell">G</div>
+      <div className="header-cell">O</div>
+      {cells}
     </div>
   );
 }
