@@ -9,6 +9,11 @@
   --border-radius: 12px;
 }
 
+#root,
+main {
+  width: 100%;
+}
+
 body {
   font-family: 'Outfit', sans-serif;
   background-color: var(--bg-color);
@@ -23,7 +28,6 @@ body {
 
 .container {
   width: 100%;
-  width: 100%;
   max-width: 500px;
   padding: 15px;
   box-sizing: border-box;
@@ -31,13 +35,14 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  margin: 0 auto;
 }
 
 header h1 {
   font-size: 3rem;
   margin: 0;
   color: var(--primary-color);
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   letter-spacing: 5px;
 }
 
@@ -45,12 +50,11 @@ header h1 {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
-  width: 100%;
   aspect-ratio: 1;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   padding: 15px;
   border-radius: var(--border-radius);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
 .header-cell {
@@ -60,7 +64,7 @@ header h1 {
   font-weight: 700;
   font-size: 1.5rem;
   color: white;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .cell {
@@ -74,8 +78,9 @@ header h1 {
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
-  box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1);
-  position: relative; /* For the marker context */
+  box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  /* For the marker context */
 }
 
 .cell:active {
@@ -85,7 +90,7 @@ header h1 {
 .cell.marked {
   background-color: var(--cell-marked);
   color: var(--primary-color);
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .cell.marked::after {
@@ -131,25 +136,19 @@ header h1 {
 
 @media (max-width: 480px) {
   .container {
-    padding: 10px;
-    height: 100vh; /* Use full height */
+    height: 100vh;
     justify-content: space-evenly;
   }
 
-  .bingo-card {
-      gap: 5px;
-      padding: 8px;
+  .cell {
+    font-size: 1.1rem;
+    border-radius: 6px;
   }
 
-  .cell {
-      font-size: 1.1rem;
-      border-radius: 6px;
-  }
-  
   .header-cell {
     font-size: 1.3rem;
   }
-  
+
   header h1 {
     font-size: 2.5rem;
   }
@@ -164,68 +163,68 @@ header h1 {
 
 /* Modal Styles */
 .ReactModal__Overlay {
-    opacity: 0;
-    transition: opacity 200ms ease-in-out;
-    background-color: rgba(0, 0, 0, 0.75) !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+  background-color: rgba(0, 0, 0, 0.75) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .ReactModal__Overlay--after-open {
-    opacity: 1;
+  opacity: 1;
 }
 
 .ReactModal__Overlay--before-close {
-    opacity: 0;
+  opacity: 0;
 }
 
 .modal-content {
-    background-color: white;
-    padding: 25px;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    outline: none;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    font-family: 'Outfit', sans-serif;
+  background-color: white;
+  padding: 25px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  outline: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  font-family: 'Outfit', sans-serif;
 }
 
 .modal-content h2 {
-    color: var(--primary-color);
-    margin-top: 0;
+  color: var(--primary-color);
+  margin-top: 0;
 }
 
 .modal-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
 }
 
 .modal-btn {
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
 }
 
 .btn-confirm {
-    background-color: var(--primary-color);
-    color: white;
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .btn-cancel {
-    background-color: #e0e0e0;
-    color: #333;
+  background-color: #e0e0e0;
+  color: #333;
 }
