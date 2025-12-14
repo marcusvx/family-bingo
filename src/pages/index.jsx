@@ -34,6 +34,9 @@ function App() {
   const [toastMessage, setToastMessage] = useState(null);
   const [showVictory, setShowVictory] = useState(false);
 
+  // Ref to prevent victory effects on initial load
+  const isInitialLoad = React.useRef(true);
+
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -43,10 +46,17 @@ function App() {
       setIsLoading(false);
       // Re-check win on load just in case
       const win = checkWin(markedIndices);
-      if (win) setWinningIndices(win);
+      if (win) {
+        setWinningIndices(win);
+        // Ensure initial load doesn't trigger confetti
+        isInitialLoad.current = true;
+      }
     } else {
       generateNewCard();
+      isInitialLoad.current = false;
     }
+    // After mount, disable initial load check after a short delay or just let the effect handle it
+    setTimeout(() => { isInitialLoad.current = false; }, 500);
   }, []);
 
   useEffect(() => {
@@ -141,25 +151,17 @@ function App() {
   };
 
   const handleCellClick = (index) => {
-    // If already won, maybe don't toggle? allowing toggle for correction.
-
     let newMarked;
-    setMarkedIndices(prev => {
-      if (prev.includes(index)) {
-        newMarked = prev.filter(i => i !== index);
-      } else {
-        newMarked = [...prev, index];
-        showRandomToast(); // Only show message on marking, not unmarking
+    if (markedIndices.includes(index)) {
+      newMarked = markedIndices.filter(i => i !== index);
+    } else {
+      newMarked = [...markedIndices, index];
+      // Only show random toast if it's NOT a win
+      if (!checkWin(newMarked)) {
+        showRandomToast();
       }
-      return newMarked;
-    });
-
-    // Check for win AFTER state update would happen (need to use newMarked local var)
-    // Actually, state update is async, so we use the local variable logic
-    // But wait, setMarkedIndices callback runs later? No, we can calculate newMarked synchronously here 
-    // to pass to checkWin immediately, but React state setter with function is better.
-    // Let's use useEffect to check win on markedIndices change instead?
-    // Using useEffect for win check is cleaner to separate logic.
+    }
+    setMarkedIndices(newMarked);
   };
 
   // Effect to check win when marked indices change
@@ -172,10 +174,18 @@ function App() {
 
     const winLine = checkWin(markedIndices);
     if (winLine) {
+      // If loading from storage, skip effects
+      if (isInitialLoad.current) {
+        setWinningIndices(winLine);
+        return;
+      }
+
       if (winningIndices.length === 0) { // First time winning this game
         setWinningIndices(winLine);
         setShowVictory(true);
         triggerConfetti();
+        // Auto-dismiss victory message after 5 seconds
+        setTimeout(() => setShowVictory(false), 5000);
       }
     } else {
       setWinningIndices([]);
@@ -227,10 +237,10 @@ function App() {
       </main>
 
       {/* Victory Overlay */}
+      {/* Victory Toast */}
       {showVictory && (
-        <div className="victory-overlay" onClick={() => setShowVictory(false)}>
-          <h1>CINQUINA!</h1>
-          <p>Parabéns!</p>
+        <div className="toast-message victory-toast">
+          Cinquina, parabéns!!!
         </div>
       )}
 

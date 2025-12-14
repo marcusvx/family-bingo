@@ -26,6 +26,9 @@ body {
   overflow-x: hidden;
 }
 
+/* Removed full screen overlay */
+
+
 .container {
   width: 100%;
   max-width: 500px;
@@ -242,16 +245,106 @@ header h1 {
   opacity: 0;
 }
 
-.modal-content {
-  background-color: white;
-  padding: 25px;
-  border-radius: 16px;
-  width: 90%;
+/* Toast Message - Simplified */
+.toast-message {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--primary-color);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  /* Standard font */
+  font-weight: bold;
+  font-size: 1.1rem;
+  z-index: 3000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 2px solid #ffd700;
+
+  width: 80%;
   max-width: 400px;
   text-align: center;
-  outline: none;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  font-family: 'Outfit', sans-serif;
+
+  /* Fade/Slide Animation */
+  animation: toastFade 3s ease-in-out forwards;
+}
+
+@keyframes toastFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  90% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+}
+
+/* Removed duplicate keyframes and cursor */
+
+@keyframes typingSequence {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+
+  15% {
+    width: 100%;
+    opacity: 1;
+  }
+
+  /* Type in quickly */
+  85% {
+    width: 100%;
+    opacity: 1;
+  }
+
+  /* Stay visible */
+  100% {
+    width: 0;
+    opacity: 0;
+  }
+
+  /* Type out */
+}
+
+@keyframes blink {
+
+  from,
+  to {
+    color: transparent;
+  }
+
+  50% {
+    color: #ffd700;
+  }
+}
+
+/* Victory Toast variant */
+.victory-toast {
+  background-color: #ffd700;
+  color: black;
+  border-color: white;
+  font-size: 1.5rem;
+  top: 15%;
+  z-index: 3100;
+  box-shadow: 0 0 20px #ffd700;
+
+  /* Longer duration for victory */
+  animation-duration: 5s;
 }
 
 .modal-content h2 {
