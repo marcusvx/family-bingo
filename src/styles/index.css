@@ -49,8 +49,11 @@ header h1 {
 .bingo-card {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  /* 5 rows + 1 header = 6 rows */
   gap: 10px;
-  aspect-ratio: 1;
+  aspect-ratio: 5 / 6;
+  /* Maintain square cells (5 cols, 6 rows) */
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   padding: 15px;
   border-radius: var(--border-radius);
@@ -103,11 +106,16 @@ header h1 {
 
 .cell.free {
   font-size: 0.8rem;
-  background-color: var(--accent-color);
+  background-color: transparent;
+  /* Remove yellow background */
+  box-shadow: none;
+  /* Optional: might look better flat if it's just an image */
   color: #333;
   text-transform: uppercase;
   text-align: center;
   line-height: normal;
+  padding: 0;
+  /* Ensure no padding affects image */
 }
 
 .new-card-btn {
