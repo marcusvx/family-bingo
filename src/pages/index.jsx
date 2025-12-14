@@ -26,6 +26,7 @@ function App() {
   const [gridData, setGridData] = useState([]);
   const [markedIndices, setMarkedIndices] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Start loading on mount
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -74,6 +75,7 @@ function App() {
   }, []);
 
   const generateNewCard = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch('/api/generate-card');
       if (!response.ok) {
@@ -85,6 +87,8 @@ function App() {
       console.warn('Falling back to local generation due to API error:', error);
       const localData = generateLocalCard();
       setGridData(localData);
+    } finally {
+      setIsLoading(false);
     }
     setMarkedIndices([]); // Clear marks
   };
@@ -119,12 +123,19 @@ function App() {
       </header>
 
       <main>
-        {gridData.length > 0 && (
-          <BingoCard
-            gridData={gridData}
-            markedIndices={markedIndices}
-            onCellClick={handleCellClick}
-          />
+        {isLoading ? (
+          <div className="bingo-card loading-placeholder">
+            <div className="spinner"></div>
+            <p>Gerando números...</p>
+          </div>
+        ) : (
+          gridData.length > 0 && (
+            <BingoCard
+              gridData={gridData}
+              markedIndices={markedIndices}
+              onCellClick={handleCellClick}
+            />
+          )
         )}
       </main>
 
