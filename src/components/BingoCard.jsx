@@ -1,5 +1,5 @@
 import React from 'react';
-import free from '../assets/leia.png';
+// import free from '../assets/leia.png'; // Removed import, using public path
 
 function BingoCard({ gridData, onCellClick, markedIndices }) {
   // ... (keeping existing logic) ...
@@ -23,7 +23,7 @@ function BingoCard({ gridData, onCellClick, markedIndices }) {
           className={`cell ${isMarked ? 'marked' : ''} ${isFree ? 'free' : ''}`}
           onClick={() => !isFree && onCellClick(currentIndex)}
         >
-          {isFree ? <img src={free} alt="LIVRE" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : value}
+          {isFree ? <img src="/assets/leia.png" alt="LIVRE" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : value}
         </div>
       );
       cellIndex++;

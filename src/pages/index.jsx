@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Modal from 'react-modal';
-import BingoCard from './components/BingoCard';
-import './styles/index.css';
+import BingoCard from '../components/BingoCard';
 
 // Modal needs to bind to the app element
-Modal.setAppElement('#root');
+Modal.setAppElement('#__next');
 
 const STORAGE_KEY = 'family_bingo_state_v1';
 const CONFIRM_MODAL_STYLES = {
@@ -54,7 +53,9 @@ function App() {
     return num;
   };
 
-  const generateNewCard = () => {
+  // Fallback local generation
+  const generateLocalCard = useCallback(() => {
+    console.log('Using local fallback generation');
     const newGridData = [];
     for (let colIndex = 0; colIndex < 5; colIndex++) {
       const range = COLUMNS[colIndex];
@@ -69,8 +70,22 @@ function App() {
       }
       newGridData.push(colValues);
     }
-    
-    setGridData(newGridData);
+    return newGridData;
+  }, []);
+
+  const generateNewCard = async () => {
+    try {
+      const response = await fetch('/api/generate-card');
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+      const data = await response.json();
+      setGridData(data.gridData);
+    } catch (error) {
+      console.warn('Falling back to local generation due to API error:', error);
+      const localData = generateLocalCard();
+      setGridData(localData);
+    }
     setMarkedIndices([]); // Clear marks
   };
 
@@ -102,13 +117,13 @@ function App() {
       <header>
         <h1>BINGO</h1>
       </header>
-      
+
       <main>
         {gridData.length > 0 && (
-          <BingoCard 
-            gridData={gridData} 
-            markedIndices={markedIndices} 
-            onCellClick={handleCellClick} 
+          <BingoCard
+            gridData={gridData}
+            markedIndices={markedIndices}
+            onCellClick={handleCellClick}
           />
         )}
       </main>
