@@ -2,9 +2,9 @@ services:
 - type: web
   name: next-js
   runtime: node
-  plan: starter
-  buildCommand: yarn; yarn build
-  startCommand: yarn start
+  plan: free
+  buildCommand: npm; npm build
+  startCommand: npm start
   autoDeploy: false
   envVars:
   - key: NODE_ENV
