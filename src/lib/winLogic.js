@@ -36,6 +36,19 @@ export function checkWin(markedIndices) {
     return null;
 }
 
+/**
+ * Checks for a full bingo (blackout).
+ * Assumes index 12 is free and not in markedIndices.
+ * A full win requires 24 marked numbers.
+ * @param {Array<number>} markedIndices 
+ * @returns {boolean}
+ */
+export function checkFullBingo(markedIndices) {
+    // Normal bingo card has 25 slots, 1 is free (index 12).
+    // So 24 marks means full board.
+    return markedIndices.length === 24;
+}
+
 export const FUN_MESSAGES = [
     "Muito bem!",
     "Hoje está com sorte!",

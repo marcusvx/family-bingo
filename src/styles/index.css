@@ -347,6 +347,21 @@ header h1 {
   animation-duration: 5s;
 }
 
+/* Modal Content */
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  outline: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  font-family: 'Outfit', sans-serif;
+  position: relative;
+  /* Ensure it stacks correctly */
+}
+
 .modal-content h2 {
   color: var(--primary-color);
   margin-top: 0;

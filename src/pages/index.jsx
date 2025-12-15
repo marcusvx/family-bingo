@@ -3,19 +3,13 @@ import Head from 'next/head';
 import Modal from 'react-modal';
 import confetti from 'canvas-confetti';
 import BingoCard from '../components/BingoCard';
-import { checkWin, FUN_MESSAGES } from '../lib/winLogic';
+import { checkWin, checkFullBingo, FUN_MESSAGES } from '../lib/winLogic';
 
 // Modal needs to bind to the app element
 Modal.setAppElement('#__next');
 
 const STORAGE_KEY = 'family_bingo_state_v1';
-const CONFIRM_MODAL_STYLES = {
-  content: {},
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-    zIndex: 1000
-  }
-};
+
 
 const COLUMNS = [
   { min: 1, max: 15 },    // B
@@ -33,6 +27,7 @@ function App() {
   const [winningIndices, setWinningIndices] = useState([]);
   const [toastMessage, setToastMessage] = useState(null);
   const [showVictory, setShowVictory] = useState(false);
+  const [victoryText, setVictoryText] = useState('');
 
   // Ref to prevent victory effects on initial load
   const isInitialLoad = React.useRef(true);
@@ -113,6 +108,7 @@ function App() {
     setMarkedIndices([]); // Clear marks
     setWinningIndices([]);
     setShowVictory(false);
+    setVictoryText('');
   };
 
   const triggerConfetti = () => {
@@ -183,9 +179,20 @@ function App() {
       if (winningIndices.length === 0) { // First time winning this game
         setWinningIndices(winLine);
         setShowVictory(true);
+        setVictoryText('Cinquina, parabéns!!!');
         triggerConfetti();
         // Auto-dismiss victory message after 5 seconds
         setTimeout(() => setShowVictory(false), 5000);
+      } else {
+        // Check for specific Full Bingo upgrade
+        if (checkFullBingo(markedIndices)) {
+          // If we ALREADY had winningIndices (from a cinquina), but now we have full bingo
+          // We re-trigger victory with new message
+          setShowVictory(true);
+          setVictoryText('BINGO. Você venceu!');
+          triggerConfetti();
+          setTimeout(() => setShowVictory(false), 5000);
+        }
       }
     } else {
       setWinningIndices([]);
@@ -238,9 +245,10 @@ function App() {
 
       {/* Victory Overlay */}
       {/* Victory Toast */}
+      {/* Victory Toast */}
       {showVictory && (
         <div className="toast-message victory-toast">
-          Cinquina, parabéns!!!
+          {victoryText}
         </div>
       )}
 
@@ -261,8 +269,16 @@ function App() {
         isOpen={isModalOpen}
         onRequestClose={handleCancel}
         contentLabel="Confirm New Card"
-        className="modal-content"
-        overlayClassName="ReactModal__Overlay"
+        className={{
+          base: 'modal-content',
+          afterOpen: 'modal-content--after-open', // We can add this if we want content animation too
+          beforeClose: 'modal-content--before-close'
+        }}
+        overlayClassName={{
+          base: 'ReactModal__Overlay',
+          afterOpen: 'ReactModal__Overlay--after-open',
+          beforeClose: 'ReactModal__Overlay--before-close'
+        }}
       >
         <h2>Nova Cartela</h2>
         <p>Tem certeza que deseja criar uma nova cartela? A cartela atual será perdida.</p>
